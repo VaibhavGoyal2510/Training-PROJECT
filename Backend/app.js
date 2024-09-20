@@ -4,7 +4,11 @@ const app= express();
 const dbConnect=require('./db.js')
 const PORT =3000;
 const validator=require('validator')
+const errorHandler = require('./middleware/errorHandler.js')
 
+const cors = require('cors');
+
+app.use(cors())
 // parse the data 
 app.use(express.json());
 // Checking how validator Works
@@ -19,12 +23,19 @@ dbConnect();
 
 app.use('/api',require('./routes/UserRoutes.js'));
 
-// Global error
-app.use((err,req,res,next)=>{
-    res.status(statuscode).json({
-        message:err
-    })
+// Global Route handler
+app.use((req,res,next)=>{
+    res.status(404).send(`Request url ${req.url} not found`)
+    next()
 })
+
+// Global error handler middlewarez 
+app.use(errorHandler)
+// app.use((err,req,res,next)=>{
+//     res.status(statuscode).json({
+//         message:err
+//     })
+// })
 app.listen(PORT,()=>{
     console.log(colors.yellow(`App is Listening on the PORT :${PORT}`));
 })

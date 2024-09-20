@@ -2,6 +2,7 @@
 const { kMaxLength } = require('buffer');
 const mongoose =require('mongoose');
 const validator = require('validator');
+const bcrypt= require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -43,14 +44,27 @@ const userSchema = new mongoose.Schema({
                     minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1
                 })
             },
-            message:"Password must contain 1 lowercase"
+            message:"Password must contain 1 lowercase 1uppercase 1number and 1 symbol"
         }
     }
+})
+
+userSchema.pre('save',async function(next){
+    console.log('Document Saved');
+   
+    if(!this.isModified('password'))
+    {
+        return next()
+    }
+        // next()
+        this.password= await bcrypt.hash(this.password,12);
+        next();
 })
 
 const User = mongoose.model("User",userSchema);
 
 module.exports=User;
+
 
 
 // Role
