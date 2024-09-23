@@ -2,13 +2,14 @@ const { isDecimal } = require('validator');
 const User =require('../model/UserModel');
 const { use } = require('../routes/UserRoutes');
 const bcrypt = require('bcrypt')
-
+const jwt = require('jsonwebtoken')
 
 exports.signUp = async(req,res,next)=>{
     try {
-        const {email}=req.body;
+        const {email}= req.body;
+        console.log(email)
         const isExistingUser = await User.findOne({email});
-        console.log(isExistingUser);
+        console.log('user',isExistingUser);
         // Checking if user already exists
         if(isExistingUser){
         //    return res.status(404).send("Pehle se hi user hai tu");
@@ -50,8 +51,12 @@ exports.login = async (req,res,next)=>{
             throw new Error("Password do not match, Please try Again")
         }
 
+        // Generate the 
+        const token = jwt.sign({id: user._id, name:user.name,role:user.role},'this-is-my-secret-string',{expiresIn:'30d'})
+
         res.status(200).json({
-            message:"Login Successfully"
+            message:"Login Successfully",
+            token
         })
 
     } catch (error) {

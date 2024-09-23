@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     name:{
         type:String,
         required:[true, "Name is Required"],
-        maxLength:[20,"Name cannot exceed40 characters"]
+        maxLength:[40,"Name cannot exceed 40 characters"]
     },
     email:{
         type: String,
@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema({
             },
             message:"Password must contain 1 lowercase 1uppercase 1number and 1 symbol"
         }
+    },
+    role:{
+        type:String,
+        enum:['admin','user'],
+        default:'admin'
     }
 })
 

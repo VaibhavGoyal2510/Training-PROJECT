@@ -5,6 +5,10 @@ import { z } from "zod";
 import axios from 'axios';
 import {toast} from 'sonner';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { Signup } from '../redux/userSlice.js';
+import { CircularProgress } from '@mui/material';
+
 // Corrected schema
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(40, "Name cannot exceed 40 characters"),
@@ -17,26 +21,20 @@ console.log(schema)
 
 function AuthForm() {
   // Corrected "errors"
+
+  const dispatch = useDispatch();
   console.log(useForm());
   const { handleSubmit, register, formState: { errors } } = useForm({
     resolver: zodResolver(schema)
   });
   const [isLogin, setIsLogin] = useState(true);
 
-  const onSubmit = async (data) => {
-    console.log(data);
-   
+  const onSubmit =  (data) => {
+    console.log('submit is running')
+    // console.log(data);
+   dispatch(Signup(data))
+  }
 
-    try {
-         const  res = await axios.post('http://localhost:3000/api/register',data)
-        console.log(res)
-        toast.success("User Successfully registered")
-
-    } catch (error) {
-        console.log(error)
-        toast.error(error.response.data.message)
-    }
-  };
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
